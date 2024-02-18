@@ -9,20 +9,21 @@ async def get_users(skip: int, limit: int, db: Session):
     return db.query(User).offset(skip).limit(limit).all()
 
 
-async def get_user_by_name(user_name: str, db: Session):
-    return db.query(User).filter(User.name == user_name).first()
-
-
 async def get_user(user_id: int, db: Session):
     return db.query(User).filter(User.id == user_id).first()
 
 
-async def get_user_by_surname(user_surname: str, db: Session):
-    return db.query(User).filter(User.surname == user_surname).first()
+async def find_user(user_name: str, user_surname: str, user_email: str, db: Session):
+    query = db.query(User)
 
+    if user_name is not None:
+        query = query.filter(User.name == user_name)
+    if user_surname is not None:
+        query = query.filter(User.surname == user_surname)
+    if user_email is not None:
+        query = query.filter(User.email == user_email)
 
-async def get_user_by_email(user_email: str, db: Session):
-    return db.query(User).filter(User.email == user_email).first()
+    return query.first()
 
 
 async def upcoming_birthdays(db: Session, days: int = 7):
