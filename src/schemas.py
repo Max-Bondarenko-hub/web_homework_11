@@ -12,7 +12,7 @@ class UserModel(BaseModel):
     additional_data: str = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class UserResponse(BaseModel):
@@ -25,12 +25,38 @@ class UserResponse(BaseModel):
     additional_data: Optional[str]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
-class UserUpdate(UserModel):
-    ...
+class UserUpdate(UserModel): ...
 
 
 class UserNameQuery(BaseModel):
     user_name: str
+
+
+class AccountModel(BaseModel):
+    login: str = Field(min_length=3, max_length=20)
+    email: str
+    password: str = Field(min_length=6, max_length=15)
+
+
+class AccountDb(BaseModel):
+    id: int
+    login: str
+    email: str
+    avatar: str
+
+    class Config:
+        from_attributes = True
+
+
+class AccountResponse(BaseModel):
+    login: AccountDb
+    detail: str = "Account successfully created"
+
+
+class TokenModel(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str = "bearer"
