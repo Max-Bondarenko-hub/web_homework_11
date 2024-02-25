@@ -3,7 +3,6 @@ from sqlalchemy import extract, or_, and_
 from sqlalchemy.orm import Session
 from src.database.models import User, Account
 from src.schemas import UserModel, UserUpdate
-from src.services.auth import auth_service
 
 
 async def get_users(skip: int, limit: int, account: Account, db: Session):
