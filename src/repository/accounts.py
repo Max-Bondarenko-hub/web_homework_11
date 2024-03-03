@@ -6,7 +6,13 @@ from src.schemas import AccountModel
 
 
 async def get_user_by_email(email: str, db: Session):
-    return db.query(Account).filter(Account.email == email).first()
+    result = db.query(Account).filter(Account.email == email).first()
+    return result
+
+
+async def get_email_by_username(username: str, db: Session):
+    result = db.query(Account).filter(Account.login == username).first()
+    return result
 
 
 async def create_account(body: AccountModel, db: Session):
@@ -25,4 +31,10 @@ async def create_account(body: AccountModel, db: Session):
 
 async def update_token(login: Account, token: str | None, db: Session):
     login.refresh_token = token
+    db.commit()
+
+
+async def confirmed_email(email: str, db: Session) -> None:
+    user = await get_user_by_email(email, db)
+    user.confirmed = True
     db.commit()
