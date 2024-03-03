@@ -3,6 +3,7 @@ from typing import List
 from fastapi import APIRouter, HTTPException, Depends, status, Security, BackgroundTasks, Request
 from fastapi.security import OAuth2PasswordRequestForm, HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
+from fastapi_limiter.depends import RateLimiter
 
 from src.database.db import get_db
 from src.schemas import AccountModel, AccountResponse, TokenModel, RequestEmail
@@ -14,7 +15,10 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 security = HTTPBearer()
 
 
-@router.post("/signup", response_model=AccountResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/signup", response_model=AccountResponse, status_code=status.HTTP_201_CREATED, 
+            description='No more than 1 account per minute',
+            dependencies=[Depends(RateLimiter(times=1, seconds=60))]
+)
 async def signup(body: AccountModel, background_tasks: BackgroundTasks, request: Request, db: Session = Depends(get_db)):
     exist_account = await accounts.get_user_by_email(body.email, db)
     if exist_account:
