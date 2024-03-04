@@ -1,7 +1,10 @@
 from typing import List
+
 from fastapi import APIRouter, HTTPException, Depends, status, Query
 from fastapi_limiter.depends import RateLimiter
+
 from sqlalchemy.orm import Session
+
 from src.database.db import get_db
 from src.schemas import UserModel, UserResponse, UserUpdate
 from src.repository import users as users_repo
