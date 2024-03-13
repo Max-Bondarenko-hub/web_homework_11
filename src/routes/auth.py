@@ -20,6 +20,20 @@ security = HTTPBearer()
             dependencies=[Depends(RateLimiter(times=1, seconds=60))]
 )
 async def signup(body: AccountModel, background_tasks: BackgroundTasks, request: Request, db: Session = Depends(get_db)):
+    """
+    Register a new user account
+    
+    :param body: Data of the new user account.
+    :type body: AccountModel
+    :param background_tasks: Background tasks for sending email.
+    :type background_tasks: BackgroundTasks
+    :param request: FastAPI request.
+    :type request: Request
+    :param db: Database session.
+    :type db: Session
+    :return: Details of the created user account.
+    :rtype: dict
+    """
     exist_account = await accounts.get_user_by_email(body.email, db)
     if exist_account:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Account already exists")
@@ -31,6 +45,16 @@ async def signup(body: AccountModel, background_tasks: BackgroundTasks, request:
 
 @router.post("/login", response_model=TokenModel)
 async def login(body: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    """
+    User login.
+
+    :param body: Login form data.
+    :type body: OAuth2PasswordRequestForm
+    :param db: Database session.
+    :type db: Session
+    :return: Access token and refresh token.
+    :rtype: TokenModel
+    """
     acc = await accounts.get_email_by_username(body.username, db)
     user = await accounts.get_user_by_email(acc.email, db)
     print(type(body.username))
@@ -48,6 +72,16 @@ async def login(body: OAuth2PasswordRequestForm = Depends(), db: Session = Depen
 
 @router.get("/refresh_token", response_model=TokenModel)
 async def refresh_token(credentials: HTTPAuthorizationCredentials = Security(security), db: Session = Depends(get_db)):
+    """
+    Refresh user access token.
+
+    :param credentials: HTTP credentials.
+    :type credentials: HTTPAuthorizationCredentials
+    :param db: Database session.
+    :type db: Session
+    :return: Access token and refresh token.
+    :rtype: TokenModel
+    """
     token = credentials.credentials
     email = await auth_service.decode_refresh_token(token)
     user = await accounts.get_user_by_email(email, db)
@@ -63,6 +97,16 @@ async def refresh_token(credentials: HTTPAuthorizationCredentials = Security(sec
 
 @router.get("/confirmed_email/{token}")
 async def confirmed_email(token: str, db: Session = Depends(get_db)):
+    """
+    Confirm user email address.
+
+    :param token: Token for email address confirmation.
+    :type token: str
+    :param db: Database session.
+    :type db: Session
+    :return: Confirmation message.
+    :rtype: dict
+    """
     email = await auth_service.get_email_from_token(token)
     print("email ", email)
     user = await accounts.get_user_by_email(email, db)
@@ -80,6 +124,20 @@ async def confirmed_email(token: str, db: Session = Depends(get_db)):
 async def request_email(
     body: RequestEmail, background_tasks: BackgroundTasks, request: Request, db: Session = Depends(get_db)
 ):
+    """
+    Send request for email address confirmation.
+
+    :param body: Data of request for email address confirmation.
+    :type body: RequestEmail
+    :param background_tasks: Background tasks for sending email.
+    :type background_tasks: BackgroundTasks
+    :param request: FastAPI request.
+    :type request: Request
+    :param db: Database session.
+    :type db: Session
+    :return: Message about request for email address confirmation.
+    :rtype: dict
+    """
     user = await accounts.get_user_by_email(body.email, db)
 
     if user.confirmed:

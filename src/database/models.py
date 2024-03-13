@@ -7,6 +7,9 @@ Base = declarative_base()
 
 
 class User(Base):
+    """
+    Model for Users in DB
+    """
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
     name = Column(String(50), nullable=False)
@@ -20,6 +23,9 @@ class User(Base):
 
 
 class Account(Base):
+    """
+    Model for Accounts in DB
+    """
     __tablename__ = "accounts"
     id = Column(Integer, primary_key=True)
     login = Column(String(50))

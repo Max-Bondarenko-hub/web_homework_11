@@ -28,6 +28,13 @@ app.include_router(profile.router, prefix='/api')
 
 @app.on_event("startup")
 async def startup():
+    """
+    Run tasks when the application starts.
+
+    Connects to the Redis server and initializes FastAPILimiter.
+
+    :return: None
+    """
     r = await redis.Redis(
         host=settings.redis_host, 
         port=settings.redis_port, 
@@ -39,6 +46,12 @@ async def startup():
 
 @app.get("/")
 def read_root():
+    """
+    Root endpoint.
+
+    :return: Message indicating the root of the API.
+    :rtype: dict
+    """
     return {"message": "USERS BOOK"}
 
 if __name__ == "__main__":

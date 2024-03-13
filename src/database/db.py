@@ -10,6 +10,12 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 def get_db():
+    """
+    Creates local database session
+    
+    :return: Session
+    :rtype: sqlalchemy.orm.Session
+    """
     db = SessionLocal()
     try:
         yield db
