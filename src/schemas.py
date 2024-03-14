@@ -1,5 +1,5 @@
 from datetime import date
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, ConfigDict
 from typing import Optional
 
 
@@ -27,7 +27,7 @@ class UserModel(BaseModel):
     birthdate: date
     additional_data: str = None
 
-    class Config:
+    class Config(ConfigDict):
         from_attributes = True
 
 
@@ -59,7 +59,7 @@ class UserResponse(BaseModel):
     birthdate: date
     additional_data: Optional[str]
 
-    class Config:
+    class Config(ConfigDict):
         from_attributes = True
 
 
@@ -114,7 +114,7 @@ class AccountDb(BaseModel):
     email: str
     avatar: str
 
-    class Config:
+    class Config(ConfigDict):
         from_attributes = True
 
 

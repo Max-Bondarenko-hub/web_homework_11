@@ -52,7 +52,7 @@ async def create_account(body: AccountModel, db: Session):
         avatar = g.get_image()
     except Exception as e:
         print(e)
-    new_account = Account(**body.dict(), avatar=avatar)
+    new_account = Account(**body.model_dump(), avatar=avatar)
     db.add(new_account)
     db.commit()
     db.refresh(new_account)
